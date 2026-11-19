@@ -1,0 +1,50 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries>
+        <package android:name="com.termux" />
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.termux.permission.RUN_COMMAND" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <application
+        android:allowBackup="false"
+        android:label="MD Studio"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/AppTheme"
+        android:supportsRtl="true" android:roundIcon="@mipmap/ic_launcher" >
+        <!-- amd_screen_guard -->
+        <provider
+            android:name="com.pocketbuilder.libraries.AmdScreenGuardInit"
+            android:authorities="com.pocketbuilder.libraries.amdguard"
+            android:exported="false"
+            android:enabled="true" />
+        <service android:name=".TermuxResultService" android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    
+        <!-- أداة تقرير مخفية: مالهاش أيقونة في القائمة، AMD Studio بس اللي بيفتحها -->
+        <activity
+            android:name=".diag.AmdReport"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:label="AMD Report" />
+    </application>
+</manifest>
