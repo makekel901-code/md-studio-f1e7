@@ -1,0 +1,39 @@
+// AMD Studio — the application module.
+plugins {
+    id 'org.jetbrains.kotlin.android'
+    id 'com.android.application'
+}
+
+android {
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    namespace 'com.pocketbuilder.libraries'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.pocketbuilder.libraries'
+        minSdk 24
+        targetSdk 34
+        versionCode 10000
+        versionName "1.0.0"
+        resValue "string", "app_name", "MD Studio (مستورد)"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+}
