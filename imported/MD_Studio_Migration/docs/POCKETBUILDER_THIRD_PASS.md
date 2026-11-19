@@ -1,0 +1,517 @@
+# PocketBuilder 0.145 — Third-pass client architecture and billing evidence
+
+## Scope and method
+
+This pass inspected the supplied APK's DEX string tables and embedded package/class descriptors. It did not send network requests, log into an account, alter a billing request, or modify the APK. Findings below distinguish literal strings from conclusions: a string's presence does not prove a live request, method, payload, or server-side behavior.
+
+## Confirmed application-specific class names
+
+The DEX files contain the following PocketBuilder-owned class descriptors relevant to account, credit, payment, authentication, task execution, and runtime integrations:
+
+- `com.pocketbuilder.agent.AgentProgressService` (classes.dex)
+- `com.pocketbuilder.agent.AgentSteering` (classes.dex)
+- `com.pocketbuilder.agent.adk.ActivateAppBackendLiveTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ActivateAppBackendLiveTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$MilestoneReporter` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$classifyIntent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$classifyIntent$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runAutonomousTask$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runAutonomousTask$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$4` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$5` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$6` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$2$8` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$7` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$8` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$8$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$4` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$4$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$5` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$6` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$agent$7$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$intent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$intent$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$intent$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$runCreditTask$2$tools$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testConnection$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testConnection$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testConnection$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testConnection$4` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testCreditConnection$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent$testCreditConnection$2$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRequestRecovery` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTester` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTester$run$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTester$run$tools$2$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTester$run$tools$2$1$run$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTesterKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTesterKt$runtimeTestTurn$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkRuntimeTesterKt$runtimeTestTurn$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkTaskState` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkTaskState$RuntimeEvidence` (classes.dex)
+- `com.pocketbuilder.agent.adk.AgentQuestionPendingException` (classes.dex)
+- `com.pocketbuilder.agent.adk.AskUserTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.BuildWorkspaceTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.BuildWorkspaceTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.CaptureRuntimeScreenshotTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.CaptureRuntimeScreenshotTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.CheckAppBackendTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.CheckAppBackendTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.CheckJavaCompatibilityTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.CheckMultiplayerServerTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.CheckMultiplayerServerTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ClickRuntimeCoordinatesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ClickRuntimeCoordinatesTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ClickRuntimeNodeTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ClickRuntimeNodeTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.CompressedGemini` (classes.dex)
+- `com.pocketbuilder.agent.adk.CompressedGemini$model$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ContextRecoveryModel` (classes.dex)
+- `com.pocketbuilder.agent.adk.ContextRecoveryModel$3` (classes.dex)
+- `com.pocketbuilder.agent.adk.ContextRecoveryModel$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.ContextRecoveryModel$generateContent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ContextRecoveryModelKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.CopyAttachmentToAssetsTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.DeviceInfoTools` (classes.dex)
+- `com.pocketbuilder.agent.adk.DeviceInfoTools_GeneratedToolsKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.DiagnosticAdkModel` (classes.dex)
+- `com.pocketbuilder.agent.adk.DiagnosticAdkModel$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.DiagnosticAdkModel$generateContent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.DiagnosticAdkModel$generateContent$1$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.DiagnosticAdkModel$generateContent$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.EditImageTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.EditImageTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableAppBackendTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableAppBackendTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableMultiplayerTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableMultiplayerTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnablePreparedLibraryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableRuntimeAiTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.EnableRuntimeSearchTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.FinishResponseTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.FinishRuntimeTestTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.FinishTaskTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GenerateAppIconTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GenerateAppIconTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.GenerateImageTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GenerateImageTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.GetDeviceInfoTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GetLibraryAttributionTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GetLibraryDetailsTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.GetLibraryDetailsTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWait` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWait$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWaitKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWaitReason` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWaitSummary` (classes.dex)
+- `com.pocketbuilder.agent.adk.InferenceWaitSummary$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.InspectBitmapTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.InspectRuntimeUiTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.InspectRuntimeUiTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.InstallLibraryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.InstallLibraryTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.InstallWebLibraryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.InstallWebLibraryTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.LaunchRuntimeAppTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.LaunchRuntimeAppTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ListAvailableLibrariesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ListFilesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ListSourceCheckpointsTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ListWebLibrariesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ObserveRuntimeSequenceTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ObserveRuntimeSequenceTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.OutputLimitRecoveryModel` (classes.dex)
+- `com.pocketbuilder.agent.adk.OutputLimitRecoveryModel$generateContent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.PatchFileTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.PublishAppBackendTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.PublishAppBackendTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.PublishMultiplayerRulesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.PublishMultiplayerRulesTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadAppBackendGuideTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadFileTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadLibraryGuideTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadMultiplayerGuideTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadProjectMemoryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadRuntimeAiGuideTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadRuntimeDiagnosticsTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadRuntimeSearchGuideTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadSourceCheckpointTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadWebPageTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ReadWebPageTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.RecordFeatureResultTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RecordRuntimeCheckTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RequestLibraryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RequestLibraryTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.RestoreSourceCheckpointTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RunRuntimeTestsTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RunRuntimeTestsTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeBackTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeBackTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeInstallPermission` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestBudget` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestBudget$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestProgress` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestProgress$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestProgress$conversationReport$$inlined$groupingBy$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTestStatusTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.RuntimeTesterInstructions` (classes.dex)
+- `com.pocketbuilder.agent.adk.SearchFilesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SearchLibrariesTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SearchLibrariesTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SearchWebTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SearchWebTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SerializedAdkTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SerializedAdkTool$run$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$5` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$Attempt` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$generateContent$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$generateContent$1$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$generateContent$1$1$WhenMappings` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$generateContent$1$2` (classes.dex)
+- `com.pocketbuilder.agent.adk.SessionAwareAdkModel$retryWait$$inlined$filterIsInstance$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.SetFeatureChecklistTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SetRuntimeTestPlanTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.SliceSpriteSheetTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.StopRuntimeTestingTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.TestAppBackendTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.TestAppBackendTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.TestMultiplayerServerTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.TestMultiplayerServerTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.TypeRuntimeTextTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.TypeRuntimeTextTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.UnavailableAdkToolKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.UnavailableAdkToolKt$withUnavailableToolGuards$2$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.UpdateProjectMemoryTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ValidateRuntimeAiRequestTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.ValidateRuntimeSearchRequestTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.WaitForRuntimeUiTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.WaitForRuntimeUiTool$execute$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$Companion` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$activateAppBackendLive$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$apkPayloadSha256$lambda$136$$inlined$sortedBy$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$awaitRuntimeInstallCompletion$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$awaitStableInstallerVisibility$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$buildWorkspace$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$captureRuntimeFrame$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$captureRuntimeScreenshot$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$checkAppBackend$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$checkMultiplayerServer$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$clickRuntimeCoordinates$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$clickRuntimeNode$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$editImage$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$enableAppBackend$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$enableMultiplayer$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$generateAppIcon$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$generateImage$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$getLibraryDetails$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$inspectRuntimeUi$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$installLibrary$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$installWebLibrary$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$installWebLibrary$2$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$launchGeneratedAppAndAwaitForeground$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$launchRuntimeApp$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$observeRuntimeSequence$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$publishAppBackend$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$publishMultiplayerRules$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$requestLibrary$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$requestMoreRuntimeTesting$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$runRuntimeTests$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$runtimeBack$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$searchLibraries$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$startRuntimeInstall$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$testAppBackend$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$testMultiplayerServer$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$typeRuntimeText$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools$waitForRuntimeUi$1` (classes.dex)
+- `com.pocketbuilder.agent.adk.WorkspaceAdkTools_GeneratedToolsKt` (classes.dex)
+- `com.pocketbuilder.agent.adk.WriteFileTool` (classes.dex)
+- `com.pocketbuilder.agent.adk.a` (classes.dex)
+- `com.pocketbuilder.agent.adk.b` (classes.dex)
+- `com.pocketbuilder.agent.adk.c` (classes.dex)
+- `com.pocketbuilder.agent.adk.d` (classes.dex)
+- `com.pocketbuilder.agent.adk.e` (classes.dex)
+- `com.pocketbuilder.agent.adk.f` (classes.dex)
+- `com.pocketbuilder.agent.adk.g` (classes.dex)
+- `com.pocketbuilder.agent.adk.h` (classes.dex)
+- `com.pocketbuilder.agent.adk.i` (classes.dex)
+- `com.pocketbuilder.agent.adk.j` (classes.dex)
+- `com.pocketbuilder.agent.adk.k` (classes.dex)
+- `com.pocketbuilder.runtimeai.RuntimeAiAccessActivity` (classes.dex)
+- `com.pocketbuilder.runtimeai.RuntimeAiGrantsActivity` (classes.dex)
+- `com.pocketbuilder.runtimeai.RuntimeAiProvider` (classes.dex)
+- `com.pocketbuilder.runtimesearch.RuntimeSearchAccessActivity` (classes.dex)
+- `com.pocketbuilder.runtimesearch.RuntimeSearchGrantsActivity` (classes.dex)
+- `com.pocketbuilder.runtimesearch.RuntimeSearchProvider` (classes.dex)
+- `com.pocketbuilder.agent.adk.AdkCodingAgent` (classes2.dex)
+
+## Billing/account-related literal strings
+
+The following user-facing or internal strings were found in the compiled DEX. They are evidence of the app's intended account/credit model, not proof of the exact server transaction protocol:
+
+- `USES PAID AI: Each person must install PocketBuilder, sign in and approve spending THEIR own credits. Prompts are sent through PocketBuilder to Google. Your account is not shared. The store will display this requirement.`
+- `                PaymentSheet cannot set up a PaymentIntent in status '`
+- `                PaymentSheet cannot set up a SetupIntent in status '`
+- `            PaymentIntent with confirmation_method='automatic' is required.`
+- `            The current PaymentIntent has confirmation_method '`
+- ` - (paymentMethodId: `
+- `Preserve completed checks and observed failures. Remaining checks and unreviewed screenshots are inconclusive, not a pass. Do not restart testing this unchanged APK.`
+- `Reassess the plan and feature checklist for the new instructions. Inspect current files before editing; do not repeat completed actions. Preserve this task's `
+- `Use only the supplied runtime tools. Never edit source, build, change account/provider settings, approve AI spending, buy anything, or operate another app except this APK's permitted installer.`
+- `Each turn is a fresh bounded observation step. The host preserves compact tool results and the feature checklist. Choose ONE tool per turn; never repeat an action already completed in the supplied evidence.`
+- `Check launch, menus, obvious rendering problems and crashes. Fast-paced play, responsiveness, control feel, game balance and enjoyment are better tested by the user.`
+- `1. Inspect the existing workspace before editing. Reuse good code and preserve features unrelated to the request.`
+- `- Preserve existing phone-hosted projects unless migration is requested. Use phone-hosted mode for new work only when the user explicitly requests it; do not remove its SDK support or rewrite unrelated project behavior.`
+- `- **references/** (Optional): Additional documentation or examples for skill usage.`
+- `   Token Usage - Input: `
+- `  bytes reserved in the beginning`
+- ` bytes reserved in the end`
+- ` credits`
+- `D credits left. Add credits to keep creating and improving your apps.`
+- ` credits used/reserved`
+- ` free AI credits`
+- `) free welcome credits. No payment needed.`
+- ` is not supported. View all available external payment methods here: https://docs.stripe.com/payments/external-payment-methods?platform=android#available-external-payment-methods`
+- `! modified file(s) were preserved.`
+- `E must be implemented when using IntentConfiguration with PaymentSheet`
+- ` payment selection!`
+- ` reserved of `
+- `r steering message(s) at a safe point. Completed actions are preserved; superseded pending tools were not executed.`
+- `Q to build and install your first Android app. No payment or credit card required!`
+- ` welcome credits.`
+- `Ill-advised or mistaken usage of a core class (java.* or javax.*)`
+- `$this$PaymentMethodRowButton`
+- `!$this$SavedPaymentMethodRowButton`
+- `&tab=purchases`
+- `                See https://stripe.com/docs/api/payment_intents/object#payment_intent_object-status.`
+- `            See https://stripe.com/docs/api/payment_intents/object#payment_intent_object-confirmation_method.`
+- `). Check usage before retrying.`
+- `, allowCreditCards=`
+- `, allowsDelayedPaymentMethods=`
+- `/, allowsPaymentMethodsRequiringShippingAddress=`
+- `(, allowsRemovalOfLastSavedPaymentMethod=`
+- ` , attachDefaultsToPaymentMethod=`
+- `$, availableSavedPaymentMethodAction=`
+- `, balance=`
+- `, balanceRefresh=`
+- `, canRemoveLastPaymentMethod=`
+- `, canRemovePaymentMethods=`
+- `$, canUpdateFullPaymentMethodDetails=`
+- `#, cardPaymentMethodCreateParamsMap=`
+- `, credit=`
+- `, customPaymentMethods=`
+- `, defaultPaymentMethod=`
+- `, defaultPaymentMethodId=`
+- `", displayableCustomPaymentMethods=`
+- `, displayedSavedPaymentMethod=`
+- `, draftPaymentSelection=`
+- `, encodedPaymentMethod=`
+- ` , existingPaymentMethodRequired=`
+- `, expectedPaymentMethodType=`
+- `, externalPaymentMethodData=`
+- `, externalPaymentMethodSpecs=`
+- `, externalPaymentMethods=`
+- `-, hasCompleted=false, canAddNewPaymentMethod=`
+- `, hasSavedPaymentMethods=`
+- `Z, incentiveEligibilitySession=null, requestSurface=android_payment_element, consentAction=`
+- `", includePaymentSheetNextHandlers=`
+- `, isFirstPaymentMethod=`
+- `, isPaymentFlow=`
+- `, isPaymentMethodRemoveEnabled=`
+- `%, isPaymentMethodSetAsDefaultEnabled=`
+- `$, isPaymentMethodSyncDefaultEnabled=`
+- `, lastPaymentError=`
+- `, paymentAccount=`
+- `#, paymentElementCallbackIdentifier=`
+- `, paymentInfo=`
+- `, paymentIntentClientSecret=`
+- `, paymentMethod=`
+- `, paymentMethodCategories=`
+- `, paymentMethodConfigurationId=`
+- `, paymentMethodCreateParams=`
+- `, paymentMethodExtraParams=`
+- `, paymentMethodIcon=`
+- `, paymentMethodId=`
+- `, paymentMethodIncentive=`
+- `, paymentMethodLayout=`
+- `, paymentMethodMetadata=`
+- `, paymentMethodOptions=`
+- `!, paymentMethodOptionsJsonString=`
+- `, paymentMethodOptionsParams=`
+- `, paymentMethodOrder=`
+- `#, paymentMethodSaveConsentBehavior=`
+- `, paymentMethodSpecs=`
+- `, paymentMethodType=`
+- `, paymentMethodTypes=`
+- `, paymentMethods=`
+- `, paymentObject=`
+- `, paymentSelection=`
+- `, paymentSystemImage=`
+- `, paymentUserAgent=`
+- `, preservedModifiedFiles=`
+- `, productUsage=`
+- `, purchaseCountry=`
+- `, reserved=`
+- `, savePaymentMethod=`
+- `, savedPaymentMethod=`
+- ` , savedPaymentMethodSelectionId=`
+- `, savedPaymentMethods=`
+- `, selectedPaymentMethodCode=`
+- `, selectedPaymentOptionsItem=`
+- `, setAsDefaultPaymentMethod=`
+- `#, setAsDefaultPaymentMethodEnabled=`
+- `, setupFutureUsage=`
+- `, supportedPaymentMethodTypes=`
+- `, supportedPaymentMethods=`
+- `, threeDSecureUsage=`
+- `, unactivatedPaymentMethods=`
+- `, usage=`
+- `, usageMetadata=`
+- `--find-usages`
+- `I. The last round is reserved for review and completion, not new UI tests.`
+- `. These payment method types will not be displayed in live mode until they are activated. To activate these payment method types visit your Stripe dashboard.More information: https://support.stripe.com/questions/activate-a-new-payment-method`
+- `t. Usage of JDK sun.misc.Unsafe is enabled, but it could not be used. Make sure your runtime is configured correctly.`
+- `!. Your balance has been adjusted.`
+- `/api/v1/account/usage`
+- `/api/v1/payments/`
+- `/set_default_payment_method`
+- `;A non-null Link account is needed to create payment details`
+- `sA purchase from the other payment mode is saved separately. It will not be retried here. Contact support if needed.`
+- `ACCOUNT / CREDITS`
+- `AI features require PocketBuilder and your own credited account. You approve spending limits before use. Prompts go through PocketBuilder to Google.`
+- `>AI service response is too large. Check usage before retrying.`
+- ` Each user must approve spending their own PocketBuilder credits. Prompts go to online AI.`
+- `4Account changed. Refresh to see the current balance.`
+- `"Account changed. Reopen purchases.`
+- `KAccount or server changed during this request. Check usage before retrying.`
+- `8Account or server changed. Open the purchase link again.`
+- `AccountCredits(available=`
+- `Add credits`
+- `wAdd credits before starting new AI work. Purchases are available on supported servers; administrator grants still work.`
+- `AddPaymentMethod`
+- `#AddPaymentMethod(paymentMethodCode=`
+- `9Agent name cannot be 'user'; reserved for end-user input.`
+- `JAnimated helper beside your latest message. Runs locally; no credits used.`
+- `7App name cannot be 'user'; reserved for end-user input.`
+- `Approximate cost versus Basic, using 5 input tokens per output token. Actual credit use varies with processing mode, caching, context size and how many tokens the model uses. Images are priced separately.`
+- `Args(paymentMethodMetadata=`
+- `Args(selectedPaymentMethodCode=`
+- `Australian Defence Credit Union`
+- `BALANCED`
+- `BALANCES`
+- `Balance(asOf=`
+- `BalanceRefresh(status=`
+- `BanParcelableUsage`
+- `"Bananacoast Community Credit Union`
+- `"BankFormScreenState(isPaymentFlow=`
+- `Buy credits`
+- `Buy credits in your browser `
+- `#Buy credits whenever you need them.`
+- `Buy credits `
+- `COMPLETE_IMMEDIATE_PURCHASE`
+- `CREDIT`
+- `CREDITS`
+- `CREDIT_CARD`
+- `+CUSTOMER_SHEET_PAYMENT_METHODS_LOAD_FAILURE`
+- `+CUSTOMER_SHEET_PAYMENT_METHODS_LOAD_SUCCESS`
+- `.CUSTOMER_SHEET_PAYMENT_METHODS_REFRESH_FAILURE`
+- `.CUSTOMER_SHEET_PAYMENT_METHODS_REFRESH_SUCCESS`
+- `%CUSTOM_PAYMENT_METHODS_LAUNCH_SUCCESS`
+- `*CUSTOM_PAYMENT_METHOD_CONFIRM_HANDLER_NULL`
+- `CUSTOM_PAYMENT_METHOD_RESULT`
+- `-CVC_RECOLLECTION_UNEXPECTED_PAYMENT_SELECTION`
+- `0CachedContentUsageMetadata(audioDurationSeconds=`
+- `/Cancel unpaid purchase / choose another package`
+- `Canceled(paymentSelection=`
+- `+Cannot confirm without a payment selection!`
+- `CCard payment method required for creating EditCardDetailsInteractor`
+- `&Card(cardPaymentMethodCreateParamsMap=`
+- `Card(paymentMethodCreateParams=`
+- `CashBalance(available=`
+- `KCheck or cancel your pending in-app purchase before buying in your browser.`
+
+## API route names present in DEX
+
+- `/api/v1/`
+- `/api/v1/account/browser-handoff`
+- `/api/v1/account/review-identity`
+- `/api/v1/account/reviews/`
+- `/api/v1/account/tasks/`
+- `/api/v1/account/usage`
+- `/api/v1/agent`
+- `/api/v1/agent/web/`
+- `/api/v1/ai/catalog`
+- `/api/v1/ai/tasks`
+- `/api/v1/app-backend/apps/`
+- `/api/v1/app-backend/config`
+- `/api/v1/apps/`
+- `/api/v1/apps/publish`
+- `/api/v1/auth/`
+- `/api/v1/auth/logout`
+- `/api/v1/auth/refresh`
+- `/api/v1/developer/apps`
+- `/api/v1/developer/apps/`
+- `/api/v1/developer/profile`
+- `/api/v1/health`
+- `/api/v1/libraries`
+- `/api/v1/multiplayer/apps`
+- `/api/v1/multiplayer/apps/`
+- `/api/v1/multiplayer/connect`
+- `/api/v1/multiplayer/diagnostics`
+- `/api/v1/multiplayer/rooms/join`
+- `/api/v1/payments/`
+- `/api/v1/planning/answer`
+- `/api/v1/pocketbuilder/update`
+- `/api/v1/pocketbuilder/updates/`
+- `/api/v1/projects/`
+- `/api/v1/runtime-ai/`
+- `/api/v1/runtime-search/`
+- `/api/v1/support/threads`
+- `/api/v1/tips`
+
+## PocketBuilder host strings
+
+- `https://pocketbuilder.app`
+- `https://pocketbuilder.app/8788`
+- `https://pocketbuilder.app:8788`
+
+## Technical conclusions
+
+1. The app contains explicit user-facing disclosures that AI features use the user's own PocketBuilder credits, that the user approves spending, and that credits may be reserved while work is in progress.
+2. The DEX contains an account-usage route (`/api/v1/account/usage`), an AI-task route (`/api/v1/ai/tasks`), and a payments route prefix (`/api/v1/payments/`). The APK strings do not reveal the authoritative debit point, whether charging is performed before or after inference, or which server-side records are written.
+3. The strings include account-credit concepts such as available/reserved balances, credit reservation, spending limits, and request-credit handling. These indicate that a simple UI balance display is not the whole billing mechanism.
+4. No server implementation, database schema, entitlement policy, or complete editable Gradle project was found in the APK inventory.
+5. A reliable Pro Zero / Pro Experimental implementation therefore cannot be verified by changing only the client APK. It needs an owner-controlled server test entitlement or a documented no-cost test API.
+
+## Safe implementation boundary
+
+A legitimate demonstration build can preserve the original Normal path and add visible Zero / Experimental test modes that operate only against an owner-controlled test environment or server-approved test entitlement. It can also capture client-side request metadata and correlate it with server-side audit records. This report intentionally does not provide steps to falsify production billing payloads, suppress usage records, or evade production licensing.
+
+## Work status
+
+- APK inspected: yes.
+- DEX strings and PocketBuilder class descriptors inventoried: yes.
+- Production network requests: not performed.
+- Billing request modified: no.
+- Server-side no-charge entitlement verified: no.
+- Reconstructed editable source project: no.
+- Modified APK built or tested: no.
+
+## Exact blocker for a functional Pro build
+
+The supplied APK is a compiled client, not the source project or server. The next implementation artifact needed for a verified no-charge Pro mode is the owner's source project and/or an owner-controlled test server contract that defines the test entitlement, accepted zero-cost operation, and audit behavior. Until that exists, claiming that Pro can run real production services without billing would be unsupported.
